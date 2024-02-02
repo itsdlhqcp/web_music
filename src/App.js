@@ -1,6 +1,5 @@
-// App.js
 import { useRef, useState, useEffect } from 'react';
-import Playlist from './PlayList';  // Import the Playlist component
+import Playlist from './PlayList';  //
 import './App.css';
 
 function App() {
@@ -10,7 +9,9 @@ function App() {
     songSrc: './Assets/songs/Inspired (Clean) - NEFFEX.mp3',
     songAvatar: './Assets/Images/image3.jpg',
   });
+  
 
+  const [nowPlaying, setNowPlaying] = useState({});
   const [audioProgress, setAudioProgress] = useState(0);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
@@ -18,7 +19,7 @@ function App() {
   const [musicCurrentTime, setMusicCurrentTime] = useState('00:00');
   const [videoIndex, setVideoIndex] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [showPlaylist, setShowPlaylist] = useState(false);  // State to manage playlist visibility
+  const [showPlaylist, setShowPlaylist] = useState(false); 
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -29,15 +30,21 @@ function App() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const audioSrc = reader.result;
-        const newPlaylist = [...playlist, { songSrc: audioSrc }];
+        const fileName = selectedFile.name;
+        const newPlaylist = [...playlist, { songSrc: audioSrc, songName: fileName  }];
         setPlaylist(newPlaylist);
         storePlaylistInStorage(newPlaylist);
+
+        
+        setNowPlaying({ songName: fileName, songArtist: 'Unknown', songSrc: audioSrc, songAvatar: './Assets/Images/image3.jpg' });
       };
       reader.readAsDataURL(selectedFile);
     } else {
       alert('Please select a file to upload.');
     }
   };
+
+  
 
   const currentAudio = useRef();
 
@@ -91,6 +98,14 @@ function App() {
         songAvatar: './Assets/Images/image3.jpg',
       });
       setIsAudioPlaying(true);
+
+      // Set now playing to the first song when the playlist is not empty
+      setNowPlaying({
+        songName: firstSong.songName || 'Unknown',
+        songArtist: firstSong.songArtist || 'Unknown',
+        songSrc: firstSong.songSrc,
+        songAvatar: './Assets/Images/image3.jpg',
+      });
     }
   }, [playlist, musicIndex]);
 
@@ -100,6 +115,7 @@ function App() {
     } else {
       setMusicIndex((prevIndex) => prevIndex + 1);
     }
+    setIsAudioPlaying(true);
   };
 
   const handlePrevSong = () => {
@@ -135,6 +151,10 @@ function App() {
     }
   };
 
+  const truncatedSongName = nowPlaying.songName
+  ? nowPlaying.songName.substring(0, nowPlaying.songName.length - 4).substring(0, 24)
+  : "Let's goo song";
+
   return (
     <>
       <div className="container">
@@ -143,8 +163,8 @@ function App() {
         <div className="blackScreen"></div>
         <div className="music-Container">
           <p className="musicPlayer">Music Player</p>
-          <p className="music-Head-Name">{currentMusicDetails.songName}</p>
-          <p className="music-Artist-Name">{currentMusicDetails.songArtist}</p>
+          <p className="music-Head-Name">{truncatedSongName}</p>
+          <p className="music-Artist-Name">{nowPlaying.songArtist}</p>
           <img src={currentMusicDetails.songAvatar} className={avatarClass[avatarClassIndex]} onClick={handleAvatar} alt="song Avatar" id="songAvatar" />
           <div className="musicTimerDiv">
             <p className="musicCurrentTime">{musicCurrentTime}</p>
@@ -173,6 +193,8 @@ function App() {
               currentAudio={currentAudio}
               isAudioPlaying={isAudioPlaying}
               setSongState={setCurrentMusicDetails}
+              showPlaylist={showPlaylist}
+              setShowPlaylist={setShowPlaylist}
             />
           )}
         </div>

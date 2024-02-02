@@ -1,0 +1,26 @@
+/* Playlist.css */
+.playlist__scrollable {
+    max-height: 200px; /* Adjust the maximum height as needed */
+    overflow-y: auto;
+  }
+  
+  .now-playing {
+    background-color: grey; /* Set your desired background color for the now playing song */
+    font-weight: bold; /* Set your desired style for the now playing song */
+  }
+  
+  /* Playlist.css */
+.playlist {
+    position: absolute;
+    top: -100%; /* Initial position, above the viewport */
+    transition: top 0.3s ease-in-out; /* Smooth transition effect */
+    background-color: white; /* Set the background color for the playlist */
+    width: 100%; /* Take up the full width of the viewport */
+  }
+  
+  .playlist.open {
+    top: 0; /* When the playlist is open, set top to 0 to bring it down */
+  }
+
+  
+  

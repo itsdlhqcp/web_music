@@ -97,6 +97,11 @@ body{
     }
 }
 
+.playlist__scrollable {
+    max-height: 200px; /* Adjust the maximum height as needed */
+    overflow-y: auto;
+  }
+
 .musicTimerDiv{
     display: flex;
     justify-content: space-between;
